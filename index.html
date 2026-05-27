@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>李瓒 Lisa｜视频项目管理 Portfolio</title>
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --paper: #fbf7f0;
+      --ink: #1e1c19;
+      --muted: #746b5f;
+      --line: #d8cfc1;
+      --accent: #a67a4b;
+      --dark: #171513;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.72;
+      letter-spacing: 0.01em;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.045;
+      background-image:
+        radial-gradient(circle at 20% 30%, #000 0.5px, transparent 0.8px),
+        radial-gradient(circle at 70% 80%, #000 0.4px, transparent 0.8px);
+      background-size: 18px 18px;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 6vw;
+      background: rgba(244, 239, 231, 0.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(216, 207, 193, 0.55);
+    }
+    .logo { font-weight: 650; letter-spacing: 0.03em; font-size: 15px; }
+    .nav-links { display: flex; gap: 26px; font-size: 13px; color: var(--muted); }
+    .nav-links a { transition: color 0.25s ease; }
+    .nav-links a:hover { color: var(--ink); }
+
+    section { padding: 110px 6vw; }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 70px;
+      align-items: center;
+      padding-top: 150px;
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: clamp(58px, 9vw, 118px);
+      line-height: 0.92;
+      letter-spacing: -0.065em;
+      font-weight: 680;
+      margin-bottom: 28px;
+    }
+    .hero h2 {
+      font-size: clamp(24px, 3.2vw, 42px);
+      line-height: 1.18;
+      letter-spacing: -0.04em;
+      max-width: 760px;
+      margin-bottom: 28px;
+      font-weight: 560;
+    }
+    .hero-copy {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 680px;
+      margin-bottom: 34px;
+    }
+    .button-row { display: flex; flex-wrap: wrap; gap: 13px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--ink);
+      font-size: 13px;
+      transition: all 0.28s ease;
+    }
+    .btn.primary { background: var(--ink); color: var(--paper); }
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .hero-panel {
+      border: 1px solid var(--line);
+      background: rgba(251, 247, 240, 0.74);
+      border-radius: 34px;
+      padding: 34px;
+      box-shadow: 0 30px 90px rgba(30, 28, 25, 0.08);
+    }
+    .hero-panel h3 { font-size: 20px; margin-bottom: 14px; letter-spacing: -0.02em; }
+    .hero-panel p { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.34);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.65fr 1.35fr;
+      gap: 52px;
+      border-top: 1px solid var(--line);
+      padding-top: 30px;
+      margin-bottom: 56px;
+    }
+    .section-head h2 {
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+      font-weight: 630;
+    }
+    .section-head p { color: var(--muted); max-width: 760px; font-size: 16px; }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .project-card {
+      position: relative;
+      min-height: 500px;
+      border-radius: 34px;
+      overflow: hidden;
+      color: #fff;
+      background: var(--dark);
+      box-shadow: 0 20px 60px rgba(30, 28, 25, 0.10);
+      transition: transform 0.45s ease, box-shadow 0.45s ease;
+    }
+    .project-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 34px 100px rgba(30, 28, 25, 0.25);
+    }
+    .thumb {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease, filter 0.45s ease;
+      filter: brightness(0.75) contrast(1.04) saturate(0.95);
+    }
+    .project-card:hover .thumb {
+      transform: scale(1.07);
+      filter: brightness(0.9) contrast(1.08) saturate(1.05);
+    }
+    .project-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.18), transparent 26%),
+        linear-gradient(to top, rgba(0,0,0,0.88), rgba(0,0,0,0.12));
+    }
+    .project-num {
+      position: absolute;
+      top: 22px;
+      left: 22px;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      opacity: 0.78;
+      z-index: 2;
+    }
+    .play {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      z-index: 2;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.55);
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(10px);
+      transition: transform 0.35s ease, background 0.35s ease;
+    }
+    .project-card:hover .play { transform: scale(1.08); background: rgba(255,255,255,0.2); }
+    .play span { transform: translateX(1px); font-size: 14px; }
+    .project-content {
+      position: absolute;
+      left: 26px;
+      right: 26px;
+      bottom: 26px;
+      z-index: 2;
+    }
+    .project-meta {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.76);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .project-content h3 {
+      font-size: 29px;
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+      margin-bottom: 10px;
+    }
+    .project-content p { font-size: 14px; color: rgba(255,255,255,0.78); }
+
+    .case-list { display: grid; gap: 30px; }
+    .case-item {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 42px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      padding: 36px;
+    }
+    .case-item h3 {
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: -0.045em;
+      margin-bottom: 8px;
+    }
+    .case-en {
+      color: var(--accent);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .case-item p { color: var(--muted); font-size: 15px; }
+    .case-video {
+      min-height: 310px;
+      border-radius: 26px;
+      background: #151515;
+      overflow: hidden;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+    .case-video img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.72);
+      transition: transform 0.55s ease, filter 0.45s ease;
+    }
+    .case-video:hover img {
+      transform: scale(1.05);
+      filter: brightness(0.88);
+    }
+    .case-video::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0.08));
+    }
+    .video-action {
+      position: relative;
+      z-index: 2;
+      color: white;
+      text-align: center;
+      padding: 24px;
+    }
+    .video-action h4 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      letter-spacing: -0.03em;
+    }
+    .video-action p {
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .video-action .btn {
+      border-color: rgba(255,255,255,0.65);
+      color: white;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+    }
+    .case-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 26px;
+    }
+    .info { border-top: 1px solid var(--line); padding-top: 12px; }
+    .info span {
+      display: block;
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .info p { color: var(--muted); font-size: 14px; }
+
+    .cv-layout { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 60px; }
+    .block { margin-bottom: 34px; }
+    .block h3 { font-size: 21px; margin-bottom: 12px; letter-spacing: -0.025em; }
+    .block p, .block li { color: var(--muted); font-size: 15px; }
+    ul { list-style: none; }
+    li { position: relative; padding-left: 17px; margin-bottom: 9px; }
+    li::before { content: "-"; position: absolute; left: 0; color: var(--accent); }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .workflow-step {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 26px;
+      min-height: 210px;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .workflow-step:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 70px rgba(30, 28, 25, 0.09);
+    }
+    .workflow-step span { color: var(--accent); font-size: 12px; letter-spacing: 0.16em; }
+    .workflow-step h3 { font-size: 21px; margin: 14px 0; letter-spacing: -0.025em; }
+    .workflow-step p { color: var(--muted); font-size: 14px; }
+
+    footer {
+      padding: 78px 6vw;
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      justify-content: space-between;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    footer h2 { font-size: 38px; letter-spacing: -0.04em; margin-bottom: 12px; }
+    footer p { color: rgba(255,255,255,0.7); font-size: 14px; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(46px);
+      transition: opacity 0.82s ease, transform 0.82s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 980px) {
+      nav { padding: 18px 5vw; }
+      .nav-links { display: none; }
+      section { padding: 90px 5vw; }
+      .hero, .section-head, .case-item, .cv-layout, .workflow-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .project-card { min-height: 390px; }
+      .case-video { min-height: 250px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grain"></div>
+
+  <nav>
+    <a class="logo" href="#home">李瓒 Lisa</a>
+    <div class="nav-links">
+      <a href="#portfolio">项目</a>
+      <a href="#case">案例</a>
+      <a href="#workflow">AI Workflow</a>
+      <a href="#cv">简历</a>
+      <a href="#contact">联系</a>
+    </div>
+  </nav>
+
+  <section class="hero" id="home">
+    <div class="reveal">
+      <div class="eyebrow">Creative Production · Content Operations · AI Workflow</div>
+      <h1>李瓒<br/>Lisa</h1>
+      <h2>将创意转化为可执行的内容生产方案</h2>
+      <p class="hero-copy">
+        我有6年品牌内容与商业视频项目管理经验，长期负责国际品牌 Campaign、TVC、Social Content 及品牌内容项目的全流程推进。相比单纯执行，我更关注如何理解品牌表达、拆解创意需求、组织制作资源，并用清晰的 workflow 推动复杂内容稳定交付。
+      </p>
+      <div class="button-row">
+        <a class="btn primary" href="#portfolio">查看项目</a>
+        <a class="btn" href="#case">查看案例拆解</a>
+        <a class="btn" href="#cv">查看简历</a>
+      </div>
+    </div>
+
+    <aside class="hero-panel reveal">
+      <h3>个人定位</h3>
+      <p>视频项目经理 / 品牌内容制作 / Creative Production / AI Workflow</p>
+      <p>目标方向：品牌方视频项目管理、国际内容项目管理、Content Producer、Producer。</p>
+      <p>核心优势：内容理解、项目推进、跨团队沟通、后期 workflow、国际品牌协作与 AI 自动化学习能力。</p>
+      <div class="tags">
+        <span class="tag">视频项目管理</span>
+        <span class="tag">品牌内容</span>
+        <span class="tag">创意制作</span>
+        <span class="tag">国际协作</span>
+        <span class="tag">AI Workflow</span>
+      </div>
+    </aside>
+  </section>
+
+  <section id="portfolio">
+    <div class="section-head reveal">
+      <h2>项目作品<br/>Portfolio</h2>
+      <p>
+        这里展示的不是单纯“成片”，而是我如何在项目中完成创意理解、制作拆解、团队协同、进度管理、风险控制与交付推进。项目卡片支持 hover 动效，点击可进入新片场观看完整视频。
+      </p>
+    </div>
+
+    <div class="portfolio-grid reveal">
+      <a class="project-card" href="https://www.xinpianchang.com/a12513258?from=share&xpcApp=xpc&channel=link&type=URL" target="_blank" rel="noopener">
+        <img class="thumb" src="assets/mothersday.jpeg" alt="奔驰母亲节广告缩略图" />
+        <div class="project-num">01</div>
+        <div class="play"><span>▶</span></div>
+        <div class="project-content">
+          <div class="project-meta">Mercedes-Benz · Campaign</div>
+          <h3>奔驰母亲节广告</h3>
+          <p>品牌节日 Campaign / 内容项目统筹 / 情绪表达与品牌调性把控</p>
+        </div>
+      </a>
+
+      <a class="project-card" href="https://www.xinpianchang.com/a13672851?from=share&xpcApp=xpc&channel=link&type=URL" target="_blank" rel="noopener">
+        <img class="thumb" src="assets/idunxy.jpeg" alt="大众 ID.UNXY 缩略图" />
+        <div class="project-num">02</div>
+        <div class="play"><span>▶</span></div>
+        <div class="project-content">
+          <div class="project-meta">Volkswagen · Launch TVC</div>
+          <h3>大众 ID.UNXY</h3>
+          <p>汽车品牌 Launch TVC / 预算制定 / 团队协同 / 项目推进</p>
+        </div>
+      </a>
+
+      <a class="project-card" href="https://www.xinpianchang.com/a12514400?from=share&xpcApp=xpc&channel=link&type=URL" target="_blank" rel="noopener">
+        <img class="thumb" src="assets/chengdu.jpeg" alt="奔驰成都车展缩略图" />
+        <div class="project-num">03</div>
+        <div class="play"><span>▶</span></div>
+        <div class="project-content">
+          <div class="project-meta">Mercedes-Benz · Auto Show</div>
+          <h3>奔驰成都车展</h3>
+          <p>远程实拍 / CG 制作 / 后期并行 workflow / 高压时间线交付</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section id="case">
+    <div class="section-head reveal">
+      <h2>案例拆解<br/>Case Study</h2>
+      <p>
+        我希望在作品集中呈现的重点不是“我参与了什么项目”，而是“我如何解决复杂内容生产中的问题”。以下案例按照项目背景、我的角色、解决方式和可迁移能力进行整理。
+      </p>
+    </div>
+
+    <div class="case-list">
+      <article class="case-item reveal">
+        <div>
+          <h3>奔驰母亲节广告</h3>
+          <div class="case-en">Mercedes-Benz Mother’s Day Campaign</div>
+          <p>作为品牌节日 Campaign 内容项目，重点不在于强产品露出，而是通过生活场景、人物状态与情绪推进，将品牌价值自然融入用户感知。我的工作重点是协调客户、导演与后期团队，保障内容按节点上线并符合奔驰的高端品牌调性。</p>
+          <div class="case-grid">
+            <div class="info"><span>Role</span><p>监制 / 内容项目统筹</p></div>
+            <div class="info"><span>Challenge</span><p>情绪表达与品牌质感需要同时成立</p></div>
+            <div class="info"><span>Solution</span><p>围绕 casting、场景、音乐与剪辑节奏控制内容调性</p></div>
+            <div class="info"><span>Value</span><p>将品牌价值融入生活化内容表达</p></div>
+          </div>
+        </div>
+        <a class="case-video" href="https://www.xinpianchang.com/a12513258?from=share&xpcApp=xpc&channel=link&type=URL" target="_blank" rel="noopener">
+          <img src="assets/mothersday.jpeg" alt="奔驰母亲节广告视频入口" />
+          <div class="video-action">
+            <h4>观看完整视频</h4>
+            <p>点击跳转新片场 / xinpianchang</p>
+            <span class="btn">Open Video</span>
+          </div>
+        </a>
+      </article>
+
+      <article class="case-item reveal">
+        <div>
+          <h3>大众 ID.UNXY</h3>
+          <div class="case-en">Volkswagen ID.UNXY Launch TVC</div>
+          <p>参与汽车品牌 Launch TVC 项目全流程推进，负责预算制定、团队协同与现场统筹管理。此类项目对执行稳定性、供应商管理、时间节点与视觉标准要求极高，需要将创意方案快速拆解为可执行计划。</p>
+          <div class="case-grid">
+            <div class="info"><span>Role</span><p>制片 / 项目推进</p></div>
+            <div class="info"><span>Challenge</span><p>高标准汽车内容在紧时间线下完成交付</p></div>
+            <div class="info"><span>Solution</span><p>提前拆解 PPM、预算、供应商与现场执行流程</p></div>
+            <div class="info"><span>Value</span><p>保障复杂汽车品牌内容稳定落地</p></div>
+          </div>
+        </div>
+        <a class="case-video" href="https://www.xinpianchang.com/a13672851?from=share&xpcApp=xpc&channel=link&type=URL" target="_blank" rel="noopener">
+          <img src="assets/idunxy.jpeg" alt="大众 ID.UNXY 视频入口" />
+          <div class="video-action">
+            <h4>观看完整视频</h4>
+            <p>点击跳转新片场 / xinpianchang</p>
+            <span class="btn">Open Video</span>
+          </div>
+        </a>
+      </article>
+
+      <article class="case-item reveal">
+        <div>
+          <h3>奔驰成都车展宣传视频</h3>
+          <div class="case-en">Mercedes-Benz Chengdu Auto Show Campaign</div>
+          <p>这是一个复杂度较高的项目，涉及远程实拍、CG 与后期团队并行推进。客户对质感要求高，修改周期短，因此我通过前期确认分镜、拍摄角度、CG 材质方向与关键节点，减少后期大规模返工风险。</p>
+          <div class="case-grid">
+            <div class="info"><span>Role</span><p>项目统筹 / 后期制作管理</p></div>
+            <div class="info"><span>Challenge</span><p>远程拍摄、CG、后期并行，客户反馈周期短</p></div>
+            <div class="info"><span>Solution</span><p>提前锁定分镜、场地、拍摄角度与 CG 材质方向</p></div>
+            <div class="info"><span>Value</span><p>提升效率，降低返工，保障复杂内容交付</p></div>
+          </div>
+        </div>
+        <a class="case-video" href="https://www.xinpianchang.com/a12514400?from=share&xpcApp=xpc&channel=link&type=URL" target="_blank" rel="noopener">
+          <img src="assets/chengdu.jpeg" alt="奔驰成都车展视频入口" />
+          <div class="video-action">
+            <h4>观看完整视频</h4>
+            <p>点击跳转新片场 / xinpianchang</p>
+            <span class="btn">Open Video</span>
+          </div>
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <section id="workflow">
+    <div class="section-head reveal">
+      <h2>AI Workflow<br/>内容生产流程</h2>
+      <p>我的 AI 学习方向不是单纯“使用工具”，而是把过往在项目管理、版本控制、素材归档、跨团队协作中的经验，转化为更高效的内容生产系统。</p>
+    </div>
+    <div class="workflow-grid reveal">
+      <div class="workflow-step"><span>01</span><h3>Brief 拆解</h3><p>用 AI 辅助提取项目目标、内容需求、风格方向、交付物与潜在风险。</p></div>
+      <div class="workflow-step"><span>02</span><h3>Reference 分析</h3><p>整理参考片、品牌调性、平台内容趋势，并转化为制作团队可执行的方向。</p></div>
+      <div class="workflow-step"><span>03</span><h3>项目 Dashboard</h3><p>用飞书/表格管理时间线、供应商、版本、审批状态和交付节点。</p></div>
+      <div class="workflow-step"><span>04</span><h3>资产归档</h3><p>按照时间、客户、项目、版本统一归档，形成可复用、可检索的内容资产库。</p></div>
+    </div>
+  </section>
+
+  <section id="cv">
+    <div class="section-head reveal">
+      <h2>简历摘要<br/>Resume</h2>
+      <p>6年品牌内容与商业视频项目管理经验，服务 Mercedes-Benz、Volkswagen、ZEISS、LI-NING 等品牌。具备创意理解、制作规划、资源整合、供应商管理、双语沟通与最终交付能力。</p>
+    </div>
+    <div class="cv-layout reveal">
+      <div>
+        <div class="block"><h3>核心能力</h3><p>内容项目管理 / 创意制作工作流程 / 品牌内容协调 / 跨职能协作 / 生产规划与时间管理 / 供应商与资源管理 / 双语沟通 / 本地化制作支持 / SOP / 资产管理</p></div>
+        <div class="block"><h3>语言与教育</h3><p>中文：母语<br/>英语：工作语言，可独立进行双语会议、提案与国际团队沟通。</p><p>Academy of Art University · 电影制片专业 · 本科 · 2014 - 2019 · 旧金山</p></div>
+      </div>
+      <div>
+        <div class="block"><h3>傲驰广告（北京）有限公司</h3><p>双语制片 · 2025.11 - 2026.02 · 北京</p><ul><li>负责汽车品牌 Campaign 与商业内容项目全流程管理。</li><li>将创意方案转化为可执行的 production workflow。</li><li>统筹导演、摄影、后期、CG、音乐及供应商多方协作。</li></ul></div>
+        <div class="block"><h3>北京唯思菲林影视文化发展有限公司</h3><p>监制 / 后期导演 · 2020.08 - 2025.10 · 北京</p><ul><li>主导品牌 TVC、Social Content、品牌宣传片及活动视频项目的后期制作与项目推进。</li><li>参与参考片分析与 creative breakdown，根据品牌调性拆解制作需求。</li><li>建立并持续优化后期制作 workflow、版本管理与内容归档机制。</li></ul></div>
+        <div class="block"><h3>东阳威宏影视工作室</h3><p>海外发行 · 2019.10 - 2020.05 · 北京</p><ul><li>负责影视内容海外发行与国际客户沟通。</li><li>支持双语商务材料与跨地区项目交付。</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div><h2>Let's connect.</h2><p>李瓒 Lisa · 视频项目管理 / 品牌内容制作 / Creative Production</p></div>
+    <div><p>15201423645</p><p>zanli1102@126.com</p><p>xinpianchang.com/u11587022</p></div>
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach((el) => observer.observe(el));
+
+    document.querySelectorAll('.project-card').forEach((card) => {
+      card.addEventListener('mousemove', (event) => {
+        const rect = card.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const rotateY = ((x / rect.width) - 0.5) * 5;
+        const rotateX = ((y / rect.height) - 0.5) * -5;
+        card.style.transform = `translateY(-12px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+  </script>
+</body>
+</html>
